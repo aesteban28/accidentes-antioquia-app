@@ -3,13 +3,11 @@ import streamlit as st
 import joblib
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import LabelEncoder
 
-# Cargar modelo y scaler
 model = joblib.load("modelo_gravedad.pkl")
 scaler = joblib.load("scaler_gravedad.pkl")
+encoders = joblib.load("encoders.pkl")
 
-# Valores únicos por variable categórica
 opciones = {
     "CLASE ACCIDENTE": ["ATROPELLO", "CAÍDA OCUPANTE", "CHOQUE", "INCENDIO", "NO REPORTADA", "OTRO", "VOLCAMIENTO"],
     "DESCRIPCIÓN COLISIONANTE": ["NO REPORTADO", "OBJETO FIJO", "SEMOVIENTE", "Semoviente", "VEHÍCULO"],
@@ -21,15 +19,8 @@ opciones = {
     "DESCRIPCIÓN LOCALIZACIÓN": ["GLORIETA", "INTERSECCIÓN", "Interseccion", "LOTE O PREDIO", "NO REPORTADO", "PASO A NIVEL", "PASO ELEVADO", "PASO INFERIOR", "PUENTE", "TRAMO DE VÍA", "Tramo de via", "VÍA PEATONAL", "VÍA TRONCAL"],
     "ESTADO CLIMA": ["LLUVIA", "Lluvia", "NIEBLA", "NORMAL", "Normal"],
     "MUNICIPIO": ["ABEJORRAL", "ALEJANDRÍA", "AMAGA", "ANTIOQUIA", "ANZA", "BETANIA", "BURITICA", "CAICEDO", "CARAMANTA", "COCORNA", "CONCORDIA", "CÁCERES", "FREDONIA", "GRANADA", "GUARNE", "GUATAPE", "ITUANGO", "JARDÍN", "JERICÓ", "LA UNIÓN", "LIBORINA", "NO REPORTA", "PEÑOL", "PUEBLO RICO", "SAN JERÓNIMO", "SAN LUIS", "SAN VICENTE", "SANTA BARBARA - ANT", "SANTABÁRBARA", "SOPETRAN", "STAFE DE ANTIOQUIA", "TÁMESIS", "TITIRIBÍ", "VALPARAÍSO", "VENECIA"],
-    "FRANJA_HORARIA": ["mañana", "tarde", "noche"]
+    "FRANJA_HORARIA": ["mañana", "noche", "tarde"]
 }
-
-# Encoders por columna
-encoders = {}
-for col, vals in opciones.items():
-    le = LabelEncoder()
-    le.fit(vals)
-    encoders[col] = le
 
 st.set_page_config(page_title="Predicción de Gravedad de Accidentes", layout="centered")
 st.title("Predicción de Gravedad de Accidentes de Tránsito")
@@ -99,9 +90,9 @@ if submitted:
 
     st.markdown("---")
     if prediccion == 1:
-        st.error(f"⚠️ El accidente presenta **víctimas** (heridos o muertos).")
+        st.error("⚠️ El accidente presenta **víctimas** (heridos o muertos).")
     else:
-        st.success(f"✅ El accidente involucra **solo daños materiales**.")
+        st.success("✅ El accidente involucra **solo daños materiales**.")
 
     st.markdown(f"**Probabilidad de accidente con víctimas:** {probabilidad[1]*100:.1f}%")
     st.markdown(f"**Probabilidad de solo daños materiales:** {probabilidad[0]*100:.1f}%")
